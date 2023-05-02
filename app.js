@@ -1,7 +1,7 @@
 "use strict";
 
 // const endpoint = "https://post-rest-api-default-rtdb.firebaseio.com";
-const endpoint = "";
+const endpoint = "https://rest-ovelser-default-rtdb.europe-west1.firebasedatabase.app/";
 let posts;
 
 window.addEventListener("load", initApp);
@@ -112,41 +112,39 @@ function showPost(postObject) {
     document.querySelector("#posts").insertAdjacentHTML("beforeend", html); // append html to the DOM - section#posts
 
     // add event listeners to .btn-delete and .btn-update
-    document.querySelector("#posts article:last-child .btn-delete").addEventListener("click", deleteClicked);
-    document.querySelector("#posts article:last-child .btn-update").addEventListener("click", updateClicked);
+    document.querySelector("#posts article:last-child .btn-delete").addEventListener("click", () => deleteClicked(post));
+    document.querySelector("#posts article:last-child .btn-update").addEventListener("click",() => updateClicked(post))
 
     // called when delete button is clicked
-    function deleteClicked() {
-        // show title of post you want to delete
-        document.querySelector("#dialog-delete-post-title").textContent = postObject.title;
-        // set data-id attribute of post you want to delete (... to use when delete)
-        document.querySelector("#form-delete-post").setAttribute("data-id", postObject.id);
-        // show delete dialog
-        document.querySelector("#dialog-delete-post").showModal();
-    }
-
+    
     // called when update button is clicked
-    function updateClicked() {
-        const updateForm = document.querySelector("#form-update-post"); // reference to update form in dialog
-        updateForm.title.value = postObject.title; // set title input in update form from post title
-        updateForm.body.value = postObject.body; // set body input in update form post body
-        updateForm.image.value = postObject.image; // set image input in update form post image
-        updateForm.setAttribute("data-id", postObject.id); // set data-id attribute of post you want to update (... to use when update)
-        document.querySelector("#dialog-update-post").showModal(); // show update modal
-    }
+}
+function deleteClicked(post) {
+    // show title of post you want to delete
+    document.querySelector("#dialog-delete-post-title").textContent = post.title;
+    // set data-id attribute of post you want to delete (... to use when delete)
+    document.querySelector("#form-delete-post").setAttribute("data-id", post.id);
+    // show delete dialog
+    document.querySelector("#dialog-delete-post").showModal();
+}
+function updateClicked(post) {
+    const updateForm = document.querySelector("#form-update-post"); // reference to update form in dialog
+    updateForm.title.value = post.title; // set title input in update form from post title
+    updateForm.body.value = post.body; // set body input in update form post body
+    updateForm.image.value = post.image; // set image input in update form post image
+    updateForm.setAttribute("data-id", post.id); // set data-id attribute of post you want to update (... to use when update)
+    document.querySelector("#dialog-update-post").showModal(); // show update modal
 }
 
 function searchPosts(searchValue) {
     searchValue = searchValue.toLowerCase();
+    
+    return posts.filter(post => post.title.toLowerCase().includes(searchValue))
 
-    const results = posts.filter(checkTitle);
-
-    function checkTitle(post) {
-        const title = post.title.toLowerCase();
-        return title.includes(searchValue);
-    }
-
-    return results;
+    // function checkTitle(post) {
+    //     const title = post.title.toLowerCase();
+    //     return title.includes(searchValue);
+    // }
 }
 
 // Create a new post - HTTP Method: POST
